@@ -34,7 +34,10 @@ class XActiveController extends \yii\rest\ActiveController {
         }
         /* @var $modelClass \yii\db\BaseActiveRecord */
         $modelClass = $this->modelClass;
-      
+
+        $identity = Yii::$app->user->identity;
+        $user_id = $identity->id;
+        
         return new ActiveDataProvider([
         'query' => $modelClass::find(),
         ]);
@@ -46,6 +49,10 @@ class XActiveController extends \yii\rest\ActiveController {
         $behaviors['authenticator'] = [
             'class' => HttpBasicAuth::className(),
         ];
+        
+        $behaviors['contentNegotiator']['formats']['application/json'] = isset($_GET['callback'])?\yii\web\Response::FORMAT_JSONP:\yii\web\Response::FORMAT_JSON;
+        $behaviors['contentNegotiator']['formats']['application/jsonp'] = \yii\web\Response::FORMAT_JSONP;
+        
         return $behaviors;
     }
     
@@ -53,5 +60,18 @@ class XActiveController extends \yii\rest\ActiveController {
         parent::checkAccess( $action, $model, $params );
         if($model && !$model->checkAccess(Yii::$app->user->identity))
             throw new \yii\web\ForbiddenHttpException('You do not have access');
+    }
+    public function afterAction($action, $result){
+        $result=parent::afterAction($action, $result);
+        
+        if(Yii::$app->response->format==\yii\web\Response::FORMAT_JSONP)
+        {
+            if(isset($_GET['callback']))
+            {
+                $result=array('callback'=>$_GET['callback'], 'data'=>$result);
+            }
+        }
+        
+        return $result;
     }
 }

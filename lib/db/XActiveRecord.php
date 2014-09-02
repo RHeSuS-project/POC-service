@@ -1,5 +1,5 @@
 <?php
-use XActiveQuery;
+//use XActiveQuery;
 namespace app\lib\db;
 class XActiveRecord extends \yii\db\ActiveRecord {
     /**
