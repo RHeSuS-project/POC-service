@@ -11,7 +11,9 @@ use Yii;
  * @property integer $type
  * @property string $name
  * @property string $address
+ * @property integer $user
  *
+ * @property User $user0
  * @property Service[] $services
  */
 class Device extends \yii\db\ActiveRecord
@@ -30,9 +32,10 @@ class Device extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['type', 'name', 'address'], 'required'],
-            [['type'], 'integer'],
-            [['name', 'address'], 'string', 'max' => 255]
+            [['type', 'name', 'address', 'user'], 'required'],
+            [['user'], 'integer'],
+            [['name', 'address'], 'string', 'max' => 255],
+            [['type'], 'string', 'max' => 5]
         ];
     }
 
@@ -46,7 +49,16 @@ class Device extends \yii\db\ActiveRecord
             'type' => Yii::t('app', 'Type'),
             'name' => Yii::t('app', 'Name'),
             'address' => Yii::t('app', 'Address'),
+            'user' => Yii::t('app', 'User'),
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUser0()
+    {
+        return $this->hasOne(User::className(), ['id' => 'user']);
     }
 
     /**
@@ -56,4 +68,10 @@ class Device extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Service::className(), ['device' => 'id']);
     }
+    
+    public function extraFields()
+    {
+        return ['user0','services'];
+    }
+
 }

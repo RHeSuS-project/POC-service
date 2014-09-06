@@ -40,9 +40,21 @@ $config = [
         'db' => require(__DIR__ . '/db.php'),
         'urlManager' => [
             'enablePrettyUrl' => true,
+            'enableStrictParsing' => true,
             'showScriptName' => false,
+            'rules' => [
+                ['class' => 'yii\rest\UrlRule', 'controller' => 'device'],
+                ['class' => 'yii\rest\UrlRule', 'controller' => 'user'],
+                ['class' => 'yii\rest\UrlRule', 'controller' => 'subscriptiondata'],
         ],
+]
     ],
+    'modules'=>array(
+        'gii'=>array(
+            'class'=>'yii\gii\Module',
+            'allowedIPs'=>['192.168.0.142'],
+        ),
+    ),
     'params' => $params,
 ];
 
@@ -51,8 +63,8 @@ if (YII_ENV_DEV) {
     $config['bootstrap'][] = 'debug';
     $config['modules']['debug'] = 'yii\debug\Module';
 
-    $config['bootstrap'][] = 'gii';
-    $config['modules']['gii'] = 'yii\gii\Module';
+ //   $config['bootstrap'][] = 'gii';
+ //   $config['modules']['gii'] = 'yii\gii\Module';
 }
 
 return $config;
