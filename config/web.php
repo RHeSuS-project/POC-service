@@ -40,7 +40,7 @@ $config = [
         'db' => require(__DIR__ . '/db.php'),
         'urlManager' => [
             'enablePrettyUrl' => true,
-            'enableStrictParsing' => true,
+            'enableStrictParsing' => false,
             'showScriptName' => false,
             'rules' => [
                 ['class' => 'yii\rest\UrlRule', 'controller' => 'device'],
@@ -52,7 +52,7 @@ $config = [
     'modules'=>array(
         'gii'=>array(
             'class'=>'yii\gii\Module',
-            'allowedIPs'=>['192.168.0.142'],
+            'allowedIPs'=>['192.168.1.142','192.168.1.144'],
         ),
     ),
     'params' => $params,
