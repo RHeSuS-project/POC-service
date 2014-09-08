@@ -46,8 +46,8 @@ class SubscriptiondataController extends ActiveController {
                 $deviceModel->user=1;
                 if($deviceModel->save())
                 {
-                    $deviceIndex = $deviceModel['id'];
-                    
+                    $deviceIndex = $deviceModel->getPrimaryKey();
+                    //return $deviceIndex;
                     if(isset($device['services']))
                     {
                         foreach($device['services'] as $service)
@@ -66,7 +66,8 @@ class SubscriptiondataController extends ActiveController {
 
                             if($serviceModel->save())
                             {
-                                $serviceIndex = $serviceModel['id'];
+                                $serviceIndex = $serviceModel->getPrimaryKey();
+                                
                                 if(isset($service['charasteristics']))
                                 {
                                     foreach ($service['charasteristics'] as $charasteristics) {
@@ -81,7 +82,7 @@ class SubscriptiondataController extends ActiveController {
                                         $charasteristicsModel->setattributes($charasteristics);
                                         if($charasteristicsModel->save())
                                         {
-                                            $charasteristicsIndex = $charasteristicsModel['id'];
+                                            $charasteristicsIndex = $charasteristicsModel->getPrimaryKey();
                                             //return $charasteristicsIndex;
                                             if(isset($charasteristics['subscriptions']))
                                             {
