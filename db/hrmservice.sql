@@ -2,10 +2,10 @@
 -- version 4.0.10deb1
 -- http://www.phpmyadmin.net
 --
--- Machine: localhost
--- Genereertijd: 04 sep 2014 om 22:55
--- Serverversie: 5.5.38-0ubuntu0.14.04.1
--- PHP-versie: 5.5.9-1ubuntu4.3
+-- Host: localhost
+-- Generation Time: Sep 07, 2014 at 10:17 PM
+-- Server version: 5.5.38-0ubuntu0.14.04.1
+-- PHP Version: 5.5.9-1ubuntu4.3
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -17,13 +17,15 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Databank: `hrmservice`
+-- Database: `hrmservice`
 --
+CREATE DATABASE IF NOT EXISTS `hrmservice` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+USE `hrmservice`;
 
 -- --------------------------------------------------------
 
 --
--- Tabelstructuur voor tabel `charasteristic`
+-- Table structure for table `charasteristic`
 --
 
 CREATE TABLE IF NOT EXISTS `charasteristic` (
@@ -32,12 +34,12 @@ CREATE TABLE IF NOT EXISTS `charasteristic` (
   `charasteristicUuid` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `service` (`service`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=16 ;
 
 -- --------------------------------------------------------
 
 --
--- Tabelstructuur voor tabel `descriptor`
+-- Table structure for table `descriptor`
 --
 
 CREATE TABLE IF NOT EXISTS `descriptor` (
@@ -51,21 +53,23 @@ CREATE TABLE IF NOT EXISTS `descriptor` (
 -- --------------------------------------------------------
 
 --
--- Tabelstructuur voor tabel `device`
+-- Table structure for table `device`
 --
 
 CREATE TABLE IF NOT EXISTS `device` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `type` int(11) NOT NULL,
+  `type` varchar(5) NOT NULL,
   `name` varchar(255) NOT NULL,
   `address` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+  `user` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user` (`user`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
 
 -- --------------------------------------------------------
 
 --
--- Tabelstructuur voor tabel `service`
+-- Table structure for table `service`
 --
 
 CREATE TABLE IF NOT EXISTS `service` (
@@ -74,12 +78,12 @@ CREATE TABLE IF NOT EXISTS `service` (
   `serviceUuid` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `device` (`device`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
 
 -- --------------------------------------------------------
 
 --
--- Tabelstructuur voor tabel `subscription_data`
+-- Table structure for table `subscription_data`
 --
 
 CREATE TABLE IF NOT EXISTS `subscription_data` (
@@ -89,12 +93,12 @@ CREATE TABLE IF NOT EXISTS `subscription_data` (
   `datetime` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `charasteristic` (`charasteristic`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4869 ;
 
 -- --------------------------------------------------------
 
 --
--- Tabelstructuur voor tabel `user`
+-- Table structure for table `user`
 --
 
 CREATE TABLE IF NOT EXISTS `user` (
@@ -103,33 +107,40 @@ CREATE TABLE IF NOT EXISTS `user` (
   `password` varchar(255) NOT NULL,
   `authkey` varchar(255) DEFAULT NULL,
   `accessToken` varchar(255) DEFAULT NULL,
+  `email_address` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
 
 --
--- Beperkingen voor gedumpte tabellen
+-- Constraints for dumped tables
 --
 
 --
--- Beperkingen voor tabel `charasteristic`
+-- Constraints for table `charasteristic`
 --
 ALTER TABLE `charasteristic`
   ADD CONSTRAINT `charasteristic_ibfk_1` FOREIGN KEY (`service`) REFERENCES `service` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Beperkingen voor tabel `descriptor`
+-- Constraints for table `descriptor`
 --
 ALTER TABLE `descriptor`
   ADD CONSTRAINT `descriptor_ibfk_1` FOREIGN KEY (`charasteristic`) REFERENCES `charasteristic` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Beperkingen voor tabel `service`
+-- Constraints for table `device`
+--
+ALTER TABLE `device`
+  ADD CONSTRAINT `device_ibfk_1` FOREIGN KEY (`user`) REFERENCES `user` (`id`);
+
+--
+-- Constraints for table `service`
 --
 ALTER TABLE `service`
   ADD CONSTRAINT `service_ibfk_1` FOREIGN KEY (`device`) REFERENCES `device` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Beperkingen voor tabel `subscription_data`
+-- Constraints for table `subscription_data`
 --
 ALTER TABLE `subscription_data`
   ADD CONSTRAINT `subscription_data_ibfk_1` FOREIGN KEY (`charasteristic`) REFERENCES `charasteristic` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
