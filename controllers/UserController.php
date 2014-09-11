@@ -4,7 +4,6 @@ namespace app\controllers;
 
 use yii\rest\ActiveController;
 use yii\filters\auth\HttpBasicAuth;
-use yii\rbac\DbManager;
 
 
 class UserController extends ActiveController

@@ -1,8 +1,8 @@
 <?php
 
-namespace app\controllers;
+namespace app\models\rbac\controllers;
 
-class RbacController extends \yii\web\Controller
+class RuleController extends \yii\web\Controller
 {
     public function actionIndex()
     {

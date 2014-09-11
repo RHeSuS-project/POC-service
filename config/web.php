@@ -60,11 +60,10 @@ $config = [
             'class'=>'yii\gii\Module',
             'allowedIPs'=>['192.168.1.142','192.168.1.144'],
         ),
-        'modules' => [
-            'rbac' => [
-                'class' => 'app\modules\rbac\rbac',
-            ],
+        'rbac' => [
+            'class' => 'app\modules\rbac\Module',
         ],
+
     ),
     
     'params' => $params,
