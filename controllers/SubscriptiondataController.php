@@ -7,17 +7,12 @@ use app\models\Device;
 use app\models\Service;
 use app\models\Charasteristic;
 use app\Models\SubscriptionData;
-
 use yii\rest\ActiveController;
+use yii\filters\auth\HttpBasicAuth;
 
 class SubscriptiondataController extends ActiveController {
 
     public $modelClass = 'app\models\SubscriptionData';
-
-    /*
-      public function importData() {
-      return 'ok';
-      } */
 
     public function actionCreate() {
 
@@ -135,35 +130,27 @@ class SubscriptiondataController extends ActiveController {
         }
         
         return $arrayData;
-        /*
-        $model = new SubscriptionData();
-        $model->attributes = $params;
-
-        if ($model->save()) {
-
-            $this->setHeader(200);
-            echo json_encode(array('status' => 1, 'data' => array_filter($model->attributes)), JSON_PRETTY_PRINT);
-        } else {
-            $this->setHeader(400);
-            echo json_encode(array('status' => 0, 'error_code' => 400, 'errors' => $model->errors), JSON_PRETTY_PRINT);
-        }*/
     }
-/*
-    public function runAction($id, $params = array()) {
-        $params = array_merge($_POST, $params);
-        parent::runAction($id, $params);
-    }
-*/
+
     public function actions() {
         $actions = parent::actions();
 
         // disable the "delete" and "create" actions
-        unset($actions['delete'], $actions['create']);
+        unset($actions['create']);
 
         // customize the data provider preparation with the "prepareDataProvider()" method
         // $actions['index']['importData'] = [$this, 'importData'];
 
         return $actions;
+    }
+    
+    public function behaviors()
+    {
+        $behaviors = parent::behaviors();
+        $behaviors['authenticator'] = [
+            'class' => HttpBasicAuth::className(),
+        ];
+        return $behaviors;
     }
 
 }

@@ -16,7 +16,8 @@ $config = [
         ],
         'user' => [
             'identityClass' => 'app\models\User',
-            'enableAutoLogin' => true,
+            'enableAutoLogin' => false,
+            'enableSession' => false,
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
@@ -46,15 +47,26 @@ $config = [
                 ['class' => 'yii\rest\UrlRule', 'controller' => 'device'],
                 ['class' => 'yii\rest\UrlRule', 'controller' => 'user'],
                 ['class' => 'yii\rest\UrlRule', 'controller' => 'subscriptiondata'],
+            ],
+
         ],
-]
+        'authManager' => [
+            'class' => 'yii\rbac\DbManager',
+	    'defaultRoles' => ['guest'],
+        ],
     ],
     'modules'=>array(
         'gii'=>array(
             'class'=>'yii\gii\Module',
             'allowedIPs'=>['192.168.1.142','192.168.1.144'],
         ),
+        'modules' => [
+            'rbac' => [
+                'class' => 'app\modules\rbac\rbac',
+            ],
+        ],
     ),
+    
     'params' => $params,
 ];
 

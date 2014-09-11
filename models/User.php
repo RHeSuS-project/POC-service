@@ -11,7 +11,7 @@ use Yii;
  * @property string $username
  * @property string $password
  * @property string $authkey
- * @property string $accessToken
+ * @property string $access_token
  * @property string $email_address
  *
  * @property Device[] $devices
@@ -33,7 +33,7 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     {
         return [
             [['username', 'password', 'email_address'], 'required'],
-            [['username', 'password', 'authkey', 'accessToken', 'email_address'], 'string', 'max' => 255]
+            [['username', 'password', 'authkey', 'access_token', 'email_address'], 'string', 'max' => 255]
         ];
     }
 
@@ -47,7 +47,7 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'username' => Yii::t('app', 'Username'),
             'password' => Yii::t('app', 'Password'),
             'authkey' => Yii::t('app', 'Authkey'),
-            'accessToken' => Yii::t('app', 'Access Token'),
+            'access_token' => Yii::t('app', 'Access Token'),
             'email_address' => Yii::t('app', 'Email Address'),
         ];
     }
@@ -58,14 +58,14 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     public function getDevices()
     {
         return $this->hasMany(Device::className(), ['user' => 'id']);
-    }
+    }   
     
     /**
      * @inheritdoc
      */
     public static function findIdentity($id)
     {
-        return isset(self::$users[$id]) ? new static(self::$users[$id]) : null;
+        return static::findOne($id);
     }
 
     /**
@@ -73,32 +73,12 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        foreach (self::$users as $user) {
-            if ($user['accessToken'] === $token) {
-                return new static($user);
-            }
-        }
-
-        return null;
+        //die($token);
+        //die(static::findOne(['access_token' => $token]));
+        return static::findOne(['access_token' => $token]);
     }
-
-    /**
-     * Finds user by username
-     *
-     * @param  string      $username
-     * @return static|null
-     */
-    public static function findByUsername($username)
-    {
-        foreach (self::$users as $user) {
-            if (strcasecmp($user['username'], $username) === 0) {
-                return new static($user);
-            }
-        }
-
-        return null;
-    }
-
+    
+    
     /**
      * @inheritdoc
      */
@@ -133,4 +113,5 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     {
         return $this->password === $password;
     }
+   
 }
