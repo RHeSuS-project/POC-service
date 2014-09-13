@@ -47,6 +47,7 @@ $config = [
                 ['class' => 'yii\rest\UrlRule', 'controller' => 'device'],
                 ['class' => 'yii\rest\UrlRule', 'controller' => 'user'],
                 ['class' => 'yii\rest\UrlRule', 'controller' => 'subscriptiondata'],
+                ['class' => 'yii\rest\UrlRule', 'controller' => 'patient'],                
             ],
 
         ],

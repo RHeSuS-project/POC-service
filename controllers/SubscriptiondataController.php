@@ -132,18 +132,32 @@ class SubscriptiondataController extends ActiveController {
         return $arrayData;
     }
 
+/*       
+    public function actionView() {
+        die('ok');
+        $identity = Yii::$app->user->identity;
+        return print_r($identity);
+    }
+*/    
+    public function actionView($id)
+    {
+        
+        $identity = Yii::$app->user->identity;
+        return $identity;
+    }
+/*    
     public function actions() {
         $actions = parent::actions();
 
         // disable the "delete" and "create" actions
-        unset($actions['create']);
+        unset($actions['create'], $actions['view']);
 
         // customize the data provider preparation with the "prepareDataProvider()" method
         // $actions['index']['importData'] = [$this, 'importData'];
 
         return $actions;
     }
-    
+*/
     public function behaviors()
     {
         $behaviors = parent::behaviors();

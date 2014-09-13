@@ -11,23 +11,28 @@ class RbacController extends Controller
                 $auth = Yii::$app->getAuthManager();
                 // Clean everything
                 $auth->removeAll();
-                // add "createDevice" permission
-                $createDevice = $auth->createPermission('createDevice');
-                $createDevice->description = 'Create a device';
-                $auth->add($createDevice);
+                // add "createData" permission
+                $createData = $auth->createPermission('createData');
+                $createData->description = 'Create data and everything else';
+                $auth->add($createData);
 
-                // add "updateDevice" permission
-                $updateDevice = $auth->createPermission('updateDevice');
-                $updateDevice->description = 'Update device settings';
-                $auth->add($updateDevice);
+                // add "readData" permission
+                $readData = $auth->createPermission('readData');
+                $readData->description = 'Read data and others';
+                $auth->add($readData);
                 
-                // add "deleteDevice" permission
-                $deleteDevice = $auth->createPermission('deleteDevice');
-                $deleteDevice->description = 'delete a device';
-                $auth->add($deleteDevice);
+                // add "updateData" permission
+                $updateData = $auth->createPermission('updateData');
+                $updateData->description = 'Update data and other settings';
+                $auth->add($updateData);
+                
+                // add "deleteData" permission
+                $deleteData = $auth->createPermission('deleteData');
+                $deleteData->description = 'Delete data and others';
+                $auth->add($deleteData);
 
                 // add "createUser" permission
-                $createUser = $auth->createPermission('UserDevice');
+                $createUser = $auth->createPermission('createUser');
                 $createUser->description = 'Create a User';
                 $auth->add($createUser);
 
@@ -41,28 +46,47 @@ class RbacController extends Controller
                 $deleteUser->description = 'delete a user';
                 $auth->add($deleteUser);
                 
-                // add "patient" role and give this role the "createDevice" permission
+                // add "patient" role and give this role the "createData" permission
                 $patient = $auth->createRole('patient');
                 $auth->add($patient);
-                $auth->addChild($patient, $createDevice);
+                $auth->addChild($patient, $createData);
 
                 // add "doctor" role 
                 $doctor = $auth->createRole('doctor');
                 $auth->add($doctor);
                 $auth->addChild($doctor, $patient);
                 
-                // add "admin" role and give this role the "updateDevice" permission
+                // add "admin" role and give this role the "updateData" permission
                 // as well as the permissions of the "patient" role
                 $admin = $auth->createRole('admin');
                 $auth->add($admin);
-                $auth->addChild($admin, $updateDevice);
-                $auth->addChild($admin, $deleteDevice);
+                $auth->addChild($admin, $updateData);
+                $auth->addChild($admin, $deleteData);
+                $auth->addChild($admin, $readData);
                 $auth->addChild($admin, $patient);
+                $auth->addChild($admin, $doctor);
 
                 // Assign roles to users. 1 and 2 are IDs returned by IdentityInterface::getId()
                 // usually implemented in your User model.
                 $auth->assign($patient, 2);
                 $auth->assign($admin, 1);
+                $auth->assign($doctor,3);
+                
+                // add the rule
+                $rule = new \app\modules\rbac\rules\UpdateDataPatientRule;
+                $auth->add($rule);
+
+                // add the "updateDataPatient" permission and associate the rule with it.
+                $updateDataPatient = $auth->createPermission('updateDataPatient');
+                $updateDataPatient->description = 'Update own data';
+                $updateDataPatient->ruleName = $rule->name;
+                $auth->add($updateDataPatient);
+
+                // "updateDataPatient" will be used from "updatePost"
+                $auth->addChild($updateDataPatient, $updateData);
+
+                // allow "author" to update their own posts
+                $auth->addChild($patient, $updateDataPatient);
         }
 
 }

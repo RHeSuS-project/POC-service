@@ -73,5 +73,16 @@ class Device extends \yii\db\ActiveRecord
     {
         return ['user0','services'];
     }
-
+/*   
+    public function fields()
+    {
+        return [
+            'id',
+            'type',
+            'name',
+            'address',
+            'user',
+        ];
+    }
+*/
 }
