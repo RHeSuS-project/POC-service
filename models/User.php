@@ -113,5 +113,15 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     {
         return $this->password === $password;
     }
-   
+    
+    public function fields()
+    {
+        $fields = parent::fields();
+        unset(
+                $fields['authkey'],
+                $fields['password'],
+                $fields['access_token']
+                );
+        return $fields;
+    }
 }
