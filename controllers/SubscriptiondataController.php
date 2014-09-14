@@ -9,18 +9,19 @@ use app\models\Charasteristic;
 use app\Models\SubscriptionData;
 use yii\rest\ActiveController;
 use yii\filters\auth\HttpBasicAuth;
+use yii\data\ActiveDataProvider;
 
 class SubscriptiondataController extends ActiveController {
 
     public $modelClass = 'app\models\SubscriptionData';
-
+    public $prepareDataProvider;
+    
     public function actionCreate() {
-
         $data = $_POST['data'];
         $unzippedData = gzuncompress($data);
         //TODO validation of DATA !!!!!!
         $arrayData = json_decode($unzippedData, true);
-        
+        //return (print_r($arrayData));
         if(isset($arrayData['devices']))
         {
             $subscriptionCount = 0;
@@ -37,8 +38,9 @@ class SubscriptiondataController extends ActiveController {
                     }
                 }    
                 $deviceModel->setAttributes($device);
-                //TODO User needs to be pulled out of authorisation 
-                $deviceModel->user=1;
+                $identity = Yii::$app->user->identity;
+                $deviceModel->user = $identity->id;
+                //return $identity->id;
                 if($deviceModel->save())
                 {
                     $deviceIndex = $deviceModel->getPrimaryKey();
@@ -84,16 +86,15 @@ class SubscriptiondataController extends ActiveController {
                                                 foreach($charasteristics['subscriptions'] as $subscriptiondata)
                                                 {
                                                     if(!$subscriptionModel = \app\models\SubscriptionData::find()->where(array(
-                                                            //ubscriptionData::find()->where(array(
                                                         'charasteristic'=>$charasteristicsIndex,
                                                         'datetime'=>$subscriptiondata['datetime'],
                                                     ))->one())
                                                     {
+                                                        
                                                         $subscriptionDataModel = new \app\models\SubscriptionData();
                                                     }
                                                     $subscriptiondata = array_merge($subscriptiondata, array('charasteristic'=>$charasteristicsIndex));
                                                     $subscriptionDataModel->setattributes($subscriptiondata);
-                                                    
                                                     if($subscriptionDataModel->save())
                                                     {
                                                         ++$subscriptionCount;
@@ -131,33 +132,47 @@ class SubscriptiondataController extends ActiveController {
         
         return $arrayData;
     }
-
-/*       
-    public function actionView() {
-        die('ok');
-        $identity = Yii::$app->user->identity;
-        return print_r($identity);
-    }
-*/    
+/*
     public function actionView($id)
     {
-        
+        //This function is still under test
         $identity = Yii::$app->user->identity;
         return $identity;
     }
-/*    
-    public function actions() {
+*/    
+    public function actions() 
+    {
         $actions = parent::actions();
 
-        // disable the "delete" and "create" actions
-        unset($actions['create'], $actions['view']);
+        // disable the "options" action
+        unset(
+                $actions['options'],
+                $actions['create']
+             );
 
         // customize the data provider preparation with the "prepareDataProvider()" method
-        // $actions['index']['importData'] = [$this, 'importData'];
+        $actions['index']['prepareDataProvider'] = [$this, 'prepareDataProvider'];
 
         return $actions;
     }
-*/
+    
+    public function prepareDataProvider()
+    {
+        // prepare and return a data provider for the "index" action
+        if ($this->prepareDataProvider !== null) {
+        return call_user_func($this->prepareDataProvider, $this);
+        }
+        /* @var $modelClass \yii\db\BaseActiveRecord */
+        $modelClass = $this->modelClass;
+
+        //$identity = Yii::$app->user->identity;
+        //$user_id = $identity->id;
+        //die(print_r($modelClass::find()));        
+        return new ActiveDataProvider([
+        'query' => $modelClass::find(),
+        ]);
+    }
+    
     public function behaviors()
     {
         $behaviors = parent::behaviors();
