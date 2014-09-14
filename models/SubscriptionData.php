@@ -31,9 +31,8 @@ class SubscriptionData extends \yii\db\ActiveRecord
     {
         return [
             [['charasteristic', 'value', 'datetime'], 'required'],
-            [['charasteristic'], 'integer'],
+            [['charasteristic','datetime'], 'integer'],
             [['value'], 'number'],
-            [['datetime'], 'safe']
         ];
     }
 
@@ -56,5 +55,10 @@ class SubscriptionData extends \yii\db\ActiveRecord
     public function getCharasteristic0()
     {
         return $this->hasOne(Charasteristic::className(), ['id' => 'charasteristic']);
+    }
+    
+    public function extraFields()
+    {
+        return ['charasteristic0'];
     }
 }
