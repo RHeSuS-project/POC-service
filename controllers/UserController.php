@@ -2,31 +2,50 @@
 
 namespace app\controllers;
 
+use Yii;
 use yii\rest\ActiveController;
 use yii\filters\auth\HttpBasicAuth;
-
+use yii\data\ActiveDataProvider;
 
 class UserController extends ActiveController
 {
     public $modelClass = 'app\models\User';
- 
-    public function actions()
+    public $prepareDataProvider;
+    
+    public function actions() 
     {
         $actions = parent::actions();
 
-        // disable the "delete" and "create" actions
-        unset($actions['delete'], $actions['create'], $actions['view']);
+        // disable the "delete", "options" and "create" actions
+        unset(
+                $actions['create'],
+                $actions['delete'],
+                $actions['options']
+             );
 
         // customize the data provider preparation with the "prepareDataProvider()" method
-        // $actions['index']['prepareDataProvider'] = [$this, 'prepareDataProvider'];
+        $actions['index']['prepareDataProvider'] = [$this, 'prepareDataProvider'];
 
         return $actions;
     }
-    public function fields()
+    
+    public function prepareDataProvider()
     {
-        $fields = parent::fields();
-        unset($fields['auth_key'], $fields['password'], $fields['access_token']);
-        return $fields;
+        // prepare and return a data provider for the "index" action
+        if ($this->prepareDataProvider !== null) {
+        return call_user_func($this->prepareDataProvider, $this);
+        }
+        /* @var $modelClass \yii\db\BaseActiveRecord */
+        $modelClass = $this->modelClass;
+
+        $identity = Yii::$app->user->identity;
+        $user_id = $identity->id;
+        //die(print_r($modelClass::find()));        
+        return new ActiveDataProvider([
+        'query' => $modelClass::find()->where(array(
+                        'id'=>$user_id,
+                        )),
+        ]);
     }
 
     public function behaviors()
