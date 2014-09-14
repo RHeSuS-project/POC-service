@@ -72,4 +72,10 @@ class Charasteristic extends \yii\db\ActiveRecord
     {
         return $this->hasMany(SubscriptionData::className(), ['charasteristic' => 'id']);
     }
+
+    public function extraFields()
+    {
+        return ['service0','descriptors'];
+    }
+    
 }
