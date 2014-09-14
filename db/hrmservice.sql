@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Sep 08, 2014 at 07:39 AM
+-- Generation Time: Sep 08, 2014 at 04:15 AM
 -- Server version: 5.5.38-0ubuntu0.14.04.1
 -- PHP Version: 5.5.9-1ubuntu4.4
 
@@ -28,6 +28,7 @@ USE `hrmservice`;
 -- Table structure for table `auth_assignment`
 --
 
+DROP TABLE IF EXISTS `auth_assignment`;
 CREATE TABLE IF NOT EXISTS `auth_assignment` (
   `item_name` varchar(64) NOT NULL,
   `user_id` int(11) NOT NULL,
@@ -42,6 +43,7 @@ CREATE TABLE IF NOT EXISTS `auth_assignment` (
 -- Table structure for table `auth_item`
 --
 
+DROP TABLE IF EXISTS `auth_item`;
 CREATE TABLE IF NOT EXISTS `auth_item` (
   `name` varchar(64) NOT NULL,
   `type` int(11) NOT NULL,
@@ -61,6 +63,7 @@ CREATE TABLE IF NOT EXISTS `auth_item` (
 -- Table structure for table `auth_item_child`
 --
 
+DROP TABLE IF EXISTS `auth_item_child`;
 CREATE TABLE IF NOT EXISTS `auth_item_child` (
   `parent` varchar(64) NOT NULL,
   `child` varchar(64) NOT NULL,
@@ -74,6 +77,7 @@ CREATE TABLE IF NOT EXISTS `auth_item_child` (
 -- Table structure for table `auth_rule`
 --
 
+DROP TABLE IF EXISTS `auth_rule`;
 CREATE TABLE IF NOT EXISTS `auth_rule` (
   `name` varchar(64) NOT NULL,
   `data` text,
@@ -88,6 +92,7 @@ CREATE TABLE IF NOT EXISTS `auth_rule` (
 -- Table structure for table `charasteristic`
 --
 
+DROP TABLE IF EXISTS `charasteristic`;
 CREATE TABLE IF NOT EXISTS `charasteristic` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `service` int(11) NOT NULL,
@@ -102,6 +107,7 @@ CREATE TABLE IF NOT EXISTS `charasteristic` (
 -- Table structure for table `descriptor`
 --
 
+DROP TABLE IF EXISTS `descriptor`;
 CREATE TABLE IF NOT EXISTS `descriptor` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `charasteristic` int(11) NOT NULL,
@@ -116,6 +122,7 @@ CREATE TABLE IF NOT EXISTS `descriptor` (
 -- Table structure for table `device`
 --
 
+DROP TABLE IF EXISTS `device`;
 CREATE TABLE IF NOT EXISTS `device` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `type` varchar(5) NOT NULL,
@@ -124,7 +131,23 @@ CREATE TABLE IF NOT EXISTS `device` (
   `user` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user` (`user`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `doctor_to_patient`
+--
+
+DROP TABLE IF EXISTS `doctor_to_patient`;
+CREATE TABLE IF NOT EXISTS `doctor_to_patient` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `doctor` int(11) NOT NULL,
+  `patient` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `doctor` (`doctor`),
+  KEY `patient` (`patient`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
 
 -- --------------------------------------------------------
 
@@ -132,6 +155,7 @@ CREATE TABLE IF NOT EXISTS `device` (
 -- Table structure for table `service`
 --
 
+DROP TABLE IF EXISTS `service`;
 CREATE TABLE IF NOT EXISTS `service` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `device` int(11) NOT NULL,
@@ -146,14 +170,15 @@ CREATE TABLE IF NOT EXISTS `service` (
 -- Table structure for table `subscription_data`
 --
 
+DROP TABLE IF EXISTS `subscription_data`;
 CREATE TABLE IF NOT EXISTS `subscription_data` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `charasteristic` int(11) NOT NULL,
   `value` double NOT NULL,
-  `datetime` datetime NOT NULL,
+  `datetime` bigint(20) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `charasteristic` (`charasteristic`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4869 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=114 ;
 
 -- --------------------------------------------------------
 
@@ -161,6 +186,7 @@ CREATE TABLE IF NOT EXISTS `subscription_data` (
 -- Table structure for table `user`
 --
 
+DROP TABLE IF EXISTS `user`;
 CREATE TABLE IF NOT EXISTS `user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(255) NOT NULL,
@@ -169,7 +195,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `access_token` varchar(255) DEFAULT NULL,
   `email_address` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
 
 --
 -- Constraints for dumped tables
@@ -179,8 +205,8 @@ CREATE TABLE IF NOT EXISTS `user` (
 -- Constraints for table `auth_assignment`
 --
 ALTER TABLE `auth_assignment`
-  ADD CONSTRAINT `user_id_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
-  ADD CONSTRAINT `auth_assignment_ibfk_1` FOREIGN KEY (`item_name`) REFERENCES `auth_item` (`name`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `auth_assignment_ibfk_1` FOREIGN KEY (`item_name`) REFERENCES `auth_item` (`name`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `user_id_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`);
 
 --
 -- Constraints for table `auth_item`
@@ -199,19 +225,26 @@ ALTER TABLE `auth_item_child`
 -- Constraints for table `charasteristic`
 --
 ALTER TABLE `charasteristic`
-  ADD CONSTRAINT `charasteristic_ibfk_1` FOREIGN KEY (`service`) REFERENCES `service` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `charasteristic_ibfk_1` FOREIGN KEY (`service`) REFERENCES `service` (`id`);
 
 --
 -- Constraints for table `descriptor`
 --
 ALTER TABLE `descriptor`
-  ADD CONSTRAINT `descriptor_ibfk_1` FOREIGN KEY (`charasteristic`) REFERENCES `charasteristic` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `descriptor_ibfk_1` FOREIGN KEY (`charasteristic`) REFERENCES `charasteristic` (`id`);
 
 --
 -- Constraints for table `device`
 --
 ALTER TABLE `device`
   ADD CONSTRAINT `device_ibfk_1` FOREIGN KEY (`user`) REFERENCES `user` (`id`);
+
+--
+-- Constraints for table `doctor_to_patient`
+--
+ALTER TABLE `doctor_to_patient`
+  ADD CONSTRAINT `doctor_to_patient_ibfk_1` FOREIGN KEY (`doctor`) REFERENCES `user` (`id`),
+  ADD CONSTRAINT `doctor_to_patient_ibfk_2` FOREIGN KEY (`patient`) REFERENCES `user` (`id`);
 
 --
 -- Constraints for table `service`
