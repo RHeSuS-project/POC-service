@@ -11,31 +11,7 @@ class DeviceController extends ActiveController
 {
     public $modelClass = 'app\models\Device';
     public $prepareDataProvider;
-/*
-    public function actionIndex()
-    {
-        $identity = Yii::$app->user->identity;
-        $user_id = $identity->id;
-        $modelClass = $this->modelClass;
-        if ($deviceModel = \app\models\Device::find()->where(array(
-                        'user'=>$user_id,
-                        ))->all())
-        {
-            return $deviceModel;
-        }
-        else
-        {
-            //TODO correct Errorhandling !! 
-            return $deviceModel->getErrors();
-        }
 
-    }
-    public function actionView($id)
-    {
-        $identity = Yii::$app->user->identity;
-        return $identity;
-    }
-*/    
     public function actions() {
         $actions = parent::actions();
 
@@ -79,21 +55,4 @@ class DeviceController extends ActiveController
         ];
         return $behaviors;
     }
-    /*
-    public function fields()
-    {
-        return [
-            // field name is the same as the attribute name
-            'id',
-            // field name is "email", the corresponding attribute name is "email_address"
-            'type' => 'device_type',
-            // field name is "name", its value is defined by a PHP callback
-            'name' => function () {
-                return ' Devicename: '.$this->name;
-            },
-            'user' => Yii::$app->user->identity,
-        ];
-    }*/
-
-
 }
