@@ -135,7 +135,8 @@ class User extends \app\lib\db\XActiveRecord implements \yii\web\IdentityInterfa
         unset(
                 $fields['authkey'],
                 $fields['password'],
-                $fields['access_token']
+                $fields['access_token'],
+                $fields['salt']
                 );
         return $fields;
     }
