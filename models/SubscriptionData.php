@@ -57,8 +57,13 @@ class SubscriptionData extends \yii\db\ActiveRecord
         return $this->hasOne(Charasteristic::className(), ['id' => 'charasteristic']);
     }
     
+    public function getService0()
+    {
+        return $this->getCharasteristic0()->with('service0');
+    }
+    
     public function extraFields()
     {
-        return ['charasteristic0'];
+        return ['charasteristic0','service0'];
     }
 }

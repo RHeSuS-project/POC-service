@@ -167,9 +167,11 @@ class SubscriptiondataController extends ActiveController {
 
         //$identity = Yii::$app->user->identity;
         //$user_id = $identity->id;
-        //die(print_r($modelClass::find()));        
+        //die(print_r($modelClass::find()));
         return new ActiveDataProvider([
-        'query' => $modelClass::find(),
+        'query' => $modelClass::find()
+                //->with('charasteristic0.service0.device0')
+                //->where(array('charasteristic.service0.device0.user'=>Yii::$app->user->identity->id))
         ]);
     }
     
