@@ -26,7 +26,8 @@ class UserController extends ActiveController
 
         // customize the data provider preparation with the "prepareDataProvider()" method
         $actions['index']['prepareDataProvider'] = [$this, 'prepareDataProvider'];
-        $actions['index']['checkAccess'] = [$this, 'checkAccess'];
+        $actions['view']['checkAccess'] = [$this, 'checkAccess'];
+        $actions['update']['checkAccess'] = [$this, 'checkAccess'];
         return $actions;
     }
     
