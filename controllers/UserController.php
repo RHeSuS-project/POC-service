@@ -7,6 +7,7 @@ use yii\rest\ActiveController;
 use yii\filters\auth\HttpBasicAuth;
 use yii\data\ActiveDataProvider;
 
+
 class UserController extends ActiveController
 {
     public $modelClass = 'app\models\User';
@@ -25,7 +26,7 @@ class UserController extends ActiveController
 
         // customize the data provider preparation with the "prepareDataProvider()" method
         $actions['index']['prepareDataProvider'] = [$this, 'prepareDataProvider'];
-
+        $actions['index']['checkAccess'] = [$this, 'checkAccess'];
         return $actions;
     }
     
@@ -55,5 +56,16 @@ class UserController extends ActiveController
             'class' => HttpBasicAuth::className(),
         ];
         return $behaviors;
+    }
+    
+    public function checkAccess( $action, $model = null, $params = [] ) {
+        parent::checkAccess( $action, $model, $params );
+        $user_id = Yii::$app->user->identity->id;
+        if($user_id!=$model->id
+                && !\app\models\DoctorToPatient::findOne(array(
+                    'doctor' => $user_id,
+                    'patient' => $model->id,
+                )))
+            throw new \yii\web\ForbiddenHttpException('You do not have access');
     }
 }
