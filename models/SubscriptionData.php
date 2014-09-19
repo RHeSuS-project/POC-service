@@ -14,7 +14,7 @@ use Yii;
  *
  * @property Charasteristic $charasteristic0
  */
-class SubscriptionData extends \yii\db\ActiveRecord
+class SubscriptionData extends \app\lib\db\XActiveRecord
 {
     /**
      * @inheritdoc

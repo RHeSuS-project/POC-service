@@ -6,17 +6,12 @@ use Yii;
 use app\models\Device;
 use app\models\Service;
 use app\models\Charasteristic;
-use app\Models\SubscriptionData;
-use yii\rest\ActiveController;
-use yii\filters\auth\HttpBasicAuth;
-use yii\data\ActiveDataProvider;
 
-class SubscriptiondataController extends ActiveController {
+class SubscriptionController extends \app\lib\rest\XActiveController {
 
     public $modelClass = 'app\models\SubscriptionData';
-    public $prepareDataProvider;
     
-    public function actionCreate() {
+    public function actionImport() {
         $data = $_POST['data'];
         $unzippedData = gzuncompress($data);
         //TODO validation of DATA !!!!!!
@@ -132,56 +127,4 @@ class SubscriptiondataController extends ActiveController {
         
         return $arrayData;
     }
-/*
-    public function actionView($id)
-    {
-        //This function is still under test
-        $identity = Yii::$app->user->identity;
-        return $identity;
-    }
-*/    
-    public function actions() 
-    {
-        $actions = parent::actions();
-
-        // disable the "options" action
-        unset(
-                $actions['options'],
-                $actions['create']
-             );
-
-        // customize the data provider preparation with the "prepareDataProvider()" method
-        $actions['index']['prepareDataProvider'] = [$this, 'prepareDataProvider'];
-
-        return $actions;
-    }
-    
-    public function prepareDataProvider()
-    {
-        // prepare and return a data provider for the "index" action
-        if ($this->prepareDataProvider !== null) {
-        return call_user_func($this->prepareDataProvider, $this);
-        }
-        /* @var $modelClass \yii\db\BaseActiveRecord */
-        $modelClass = $this->modelClass;
-
-        //$identity = Yii::$app->user->identity;
-        //$user_id = $identity->id;
-        //die(print_r($modelClass::find()));
-        return new ActiveDataProvider([
-        'query' => $modelClass::find()
-                //->with('charasteristic0.service0.device0')
-                //->where(array('charasteristic.service0.device0.user'=>Yii::$app->user->identity->id))
-        ]);
-    }
-    
-    public function behaviors()
-    {
-        $behaviors = parent::behaviors();
-        $behaviors['authenticator'] = [
-            'class' => HttpBasicAuth::className(),
-        ];
-        return $behaviors;
-    }
-
 }

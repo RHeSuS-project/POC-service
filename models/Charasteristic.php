@@ -15,7 +15,7 @@ use Yii;
  * @property Descriptor[] $descriptors
  * @property SubscriptionData[] $subscriptionDatas
  */
-class Charasteristic extends \yii\db\ActiveRecord
+class Charasteristic extends \app\lib\db\XActiveRecord
 {
     /**
      * @inheritdoc
@@ -78,4 +78,7 @@ class Charasteristic extends \yii\db\ActiveRecord
         return ['service0','descriptors'];
     }
     
+    public function getAccessRule($identity=null) {
+        return array('service' => $this->service0->getAccessQuery($identity));
+    }
 }

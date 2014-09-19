@@ -11,12 +11,17 @@ class XActiveRecord extends \yii\db\ActiveRecord {
         return \Yii::createObject(XActiveQuery::className(), [get_called_class()]);
     }
     
-    public function getAccessRule() {
+    public function getAccessRule($identity=null) {
         return array();
     }
     
+    public function getAccessQuery($identity) {
+        $query=(new \yii\db\Query())->select('id')->from($this->tableName())->where($this->getAccessRule($identity));
+        return $query;
+    }
+    
     public function checkAccess($identity) {
-        if($this->find()->Where($this->getAccessRule($identity))->andWhere(array('id'=>$this->id))->one())
+        if($this->find()->Where($this->getAccessRule($identity))->andWhere($this->getPrimaryKey(true))->one())
             return true;
         return false;
     }

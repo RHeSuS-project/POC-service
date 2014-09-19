@@ -14,7 +14,7 @@ use Yii;
  * @property Charasteristic[] $charasteristics
  * @property Device $device0
  */
-class Service extends \yii\db\ActiveRecord
+class Service extends \app\lib\db\XActiveRecord
 {
     /**
      * @inheritdoc
@@ -62,5 +62,9 @@ class Service extends \yii\db\ActiveRecord
     public function getDevice0()
     {
         return $this->hasOne(Device::className(), ['id' => 'device']);
+    }
+    
+    public function getAccessRule($identity=null) {
+        return array('device' => $this->device0->getAccessQuery($identity));
     }
 }

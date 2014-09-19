@@ -131,7 +131,7 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     }
     
     public function getCheckAccessQuery($identity) {
-        return $identity->getAccessQuery()->andWhere(array('id'=>$this->id));
+        return $identity->getAccessQuery()->andWhere($this->getPrimaryKey(true));
     }
     
     public function checkAccess($identity) {
