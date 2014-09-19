@@ -2,8 +2,7 @@
 
 namespace app\models;
 
-use Yii;
-
+use \Yii;
 /**
  * This is the model class for table "user".
  *
@@ -123,5 +122,21 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
                 $fields['access_token']
                 );
         return $fields;
+    }
+    
+    public function getAccessQuery() {
+        $subquery=(new \yii\db\Query())->select('patient')->from('doctor_to_patient')->where(array('doctor'=>$this->id));
+        $query=(new \yii\db\Query())->select('id')->from('user')->where(array('id'=>$this->id))->orWhere(array('id'=>$subquery));
+        return $query;
+    }
+    
+    public function getCheckAccessQuery($identity) {
+        return $identity->getAccessQuery()->andWhere(array('id'=>$this->id));
+    }
+    
+    public function checkAccess($identity) {
+        if($this->getCheckAccessQuery($identity)->one())
+            return true;
+        return false;
     }
 }

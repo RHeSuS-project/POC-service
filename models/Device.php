@@ -16,7 +16,7 @@ use Yii;
  * @property User $user0
  * @property Service[] $services
  */
-class Device extends \yii\db\ActiveRecord
+class Device extends \app\lib\db\XActiveRecord
 {
     /**
      * @inheritdoc
@@ -72,6 +72,12 @@ class Device extends \yii\db\ActiveRecord
     public function extraFields()
     {
         return ['user0','services'];
+    }
+    
+    public function getAccessRule($identity=null) {
+        if(!$identity)
+            $identity=Yii::$app->user->identity;
+        return array('user' => $identity->getAccessQuery());
     }
 /*   
     public function fields()
