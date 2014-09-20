@@ -15,7 +15,7 @@ use \Yii;
  *
  * @property Device[] $devices
  */
-class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
+class User extends \app\lib\db\XActiveRecord implements \yii\web\IdentityInterface
 {
     /**
      * @inheritdoc
@@ -124,7 +124,13 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
         return $fields;
     }
     
-    public function getAccessQuery() {
+    public function getAccessRule($identity=null) {
+        if(!$identity)
+            $identity=Yii::$app->user->identity;
+        return array('id'=>$identity->getAccessQuery());
+    }
+    
+    public function getAccessQuery($identity=null) {
         $subquery=(new \yii\db\Query())->select('patient')->from('doctor_to_patient')->where(array('doctor'=>$this->id));
         $query=(new \yii\db\Query())->select('id')->from('user')->where(array('id'=>$this->id))->orWhere(array('id'=>$subquery));
         return $query;
