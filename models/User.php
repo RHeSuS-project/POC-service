@@ -74,7 +74,15 @@ class User extends \app\lib\db\XActiveRecord implements \yii\web\IdentityInterfa
     {
         //die($token);
         //die(static::findOne(['access_token' => $token]));
+        if($type=='yii\filters\auth\HttpBasicAuth')
+        {
+            return User::validateLogin($_SERVER['PHP_AUTH_USER'],$_SERVER['PHP_AUTH_PW']);
+        }
         return static::findOne(['access_token' => $token]);
+    }
+    
+    public function validateLogin($username, $password){
+        return static::findOne(['username' => $username,'password'=>$password]);
     }
     
     
