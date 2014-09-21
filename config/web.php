@@ -48,8 +48,7 @@ $config = [
                 ['class' => 'yii\rest\UrlRule', 'controller' => 'service'],
                 ['class' => 'yii\rest\UrlRule', 'controller' => 'charasteristic'],
                 ['class' => 'yii\rest\UrlRule', 'controller' => 'user'],
-                ['class' => 'yii\rest\UrlRule', 'controller' => 'subscription'],
-                ['class' => 'yii\rest\UrlRule', 'controller' => 'patient'],                
+                ['class' => 'yii\rest\UrlRule', 'controller' => 'subscription'],          
             ],
 
         ],

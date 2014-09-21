@@ -139,7 +139,7 @@ class User extends \app\lib\db\XActiveRecord implements \yii\web\IdentityInterfa
     }
     
     public function getAccessQuery($identity=null) {
-        $subquery=(new \yii\db\Query())->select('patient')->from('doctor_to_patient')->where(array('doctor'=>$this->id));
+        $subquery=(new \yii\db\Query())->select('patient')->from('supervisor')->where(array('supervisor'=>$this->id));
         $query=(new \yii\db\Query())->select('id')->from('user')->where(array('id'=>$this->id))->orWhere(array('id'=>$subquery));
         return $query;
     }
@@ -165,7 +165,7 @@ class User extends \app\lib\db\XActiveRecord implements \yii\web\IdentityInterfa
     }
     
     public function getRateLimit( $request, $action){
-        return array(100,600);
+        return array(600,600);
     }
     
     public function saveAllowance($request, $action, $allowance, $timestamp) {

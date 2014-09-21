@@ -14,14 +14,14 @@ use Yii;
  * @property User $doctor0
  * @property User $patient0
  */
-class DoctorToPatient extends \yii\db\ActiveRecord
+class Supervisor extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'doctor_to_patient';
+        return 'supervisor';
     }
 
     /**
@@ -30,8 +30,8 @@ class DoctorToPatient extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['doctor', 'patient'], 'required'],
-            [['doctor', 'patient'], 'integer']
+            [['supervisor', 'user'], 'required'],
+            [['supervisor', 'user'], 'integer']
         ];
     }
 
@@ -42,29 +42,29 @@ class DoctorToPatient extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'doctor' => Yii::t('app', 'Doctor'),
-            'patient' => Yii::t('app', 'Patient'),
+            'supervisor' => Yii::t('app', 'supervisor'),
+            'user' => Yii::t('app', 'user'),
         ];
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getDoctor0()
+    public function getSupervisor0()
     {
-        return $this->hasOne(User::className(), ['id' => 'doctor']);
+        return $this->hasOne(User::className(), ['id' => 'supervisor']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getPatient0()
+    public function getUser0()
     {
-        return $this->hasOne(User::className(), ['id' => 'patient']);
+        return $this->hasOne(User::className(), ['id' => 'user']);
     }
     
     public function extraFields()
     {
-        return ['doctor0','patient0'];
+        return ['supervisor0','user0'];
     }
 }
