@@ -27,7 +27,6 @@ class XActiveRecord extends \yii\db\ActiveRecord {
     }
     
     public function saveAll($models, $runValidation = true, $attributeNames = null) {
-        ini_set('memory_limit','5G');
         $db = static::getDb();
         $sql='';
         if ($this->isTransactional(self::OP_INSERT)) {

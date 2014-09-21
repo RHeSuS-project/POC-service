@@ -33,6 +33,7 @@ class SubscriptionController extends \app\lib\rest\XActiveController {
     
     public function actionImport()
     {
+        ini_set('memory_limit','5G');
         if(isset($_POST['data']))
             $data = $_POST['data'];
         else
