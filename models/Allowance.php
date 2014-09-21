@@ -14,7 +14,7 @@ use Yii;
  *
  * @property User $user0
  */
-class Allowance extends \yii\db\ActiveRecord
+class Allowance extends \app\lib\db\XActiveRecord
 {
     /**
      * @inheritdoc
