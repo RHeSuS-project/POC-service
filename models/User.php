@@ -15,7 +15,7 @@ use \Yii;
  *
  * @property Device[] $devices
  */
-class User extends \app\lib\db\XActiveRecord implements \yii\web\IdentityInterface
+class User extends \app\lib\db\XActiveRecord implements \yii\web\IdentityInterface, \yii\filters\RateLimitInterface
 {
     /**
      * @inheritdoc
@@ -144,5 +144,30 @@ class User extends \app\lib\db\XActiveRecord implements \yii\web\IdentityInterfa
         if($this->getCheckAccessQuery($identity)->one())
             return true;
         return false;
+    }
+    
+    public function loadAllowance($request, $action) {
+        $rateLimit=$this->getRateLimit($request, $action);
+        $allowance=Allowance::find(array('and', 'time'=>'>'.time()-$rateLimit[1], 'user'=>Yii::$app->user->identity->id))->one();
+        $allowed=$rateLimit[0];
+        if($allowance)
+            $allowed=$allowance->allowance;
+        
+        return array($allowed, time());
+    }
+    
+    public function getRateLimit( $request, $action){
+        return array(100,600);
+    }
+    
+    public function saveAllowance($request, $action, $allowance, $timestamp) {
+        if(!$model=Allowance::find(array('user'=>Yii::$app->user->identity->id))->one())
+        {
+                $model=new Allowance();
+                $model->user=Yii::$app->user->identity->id;
+        }
+        $model->time=$timestamp;
+        $model->allowance=$allowance;
+        $model->save();
     }
 }

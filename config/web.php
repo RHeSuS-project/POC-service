@@ -61,7 +61,7 @@ $config = [
     'modules'=>array(
         'gii'=>array(
             'class'=>'yii\gii\Module',
-            'allowedIPs'=>['192.168.1.142','192.168.1.144'],
+            'allowedIPs'=>['192.168.1.142','192.168.1.144','127.0.0.1'],
         ),
         'rbac' => [
             'class' => 'app\modules\rbac\Module',
