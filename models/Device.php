@@ -79,6 +79,34 @@ class Device extends \app\lib\db\XActiveRecord
             $identity=Yii::$app->user->identity;
         return array('user' => $identity->getAccessQuery());
     }
+    
+    public function import($devices) {
+        $subscriptionCount = 0;
+        foreach ($devices as $device) {
+            if (isset($device['type']) && isset($device['address'])) {
+                if (!$deviceModel = Device::find()->where(array(
+                            'type' => $device['type'],
+                            'address' => $device['address'],
+                        ))->one()) {
+                    $deviceModel = new Device();
+                }
+            }
+            $deviceModel->setAttributes($device);
+            $identity = Yii::$app->user->identity;
+            $deviceModel->user = $identity->id;
+            //return $identity->id;
+            if ($deviceModel->save()) {
+                $deviceIndex = $deviceModel->getPrimaryKey();
+                //return $deviceIndex;
+                if (isset($device['services'])) {
+                    $subscriptionCount+=Service::import($device['services'], $deviceIndex);
+                }
+            } /*else {
+                return $deviceModel->getErrors();
+            }*/
+            return $subscriptionCount;
+        }
+    }
 /*   
     public function fields()
     {

@@ -67,4 +67,30 @@ class Service extends \app\lib\db\XActiveRecord
     public function getAccessRule($identity=null) {
         return array('device' => $this->device0->getAccessQuery($identity));
     }
+    
+    public function import($services, $deviceIndex) {
+        $subscriptionCount=0;
+        foreach ($services as $service) {
+
+            if (!$serviceModel = Service::find()->where(array(
+                        'device' => $deviceIndex,
+                        'serviceUuid' => $service['serviceUuid'],
+                    ))->one()) {
+                $serviceModel = new Service();
+            }
+            $service = array_merge($service, array('device' => $deviceIndex));
+            $serviceModel->setAttributes($service);
+
+            if ($serviceModel->save()) {
+                $serviceIndex = $serviceModel->getPrimaryKey();
+
+                if (isset($service['charasteristics'])) {
+                    $subscriptionCount+=\app\models\Charasteristic::import($service['charasteristics'], $serviceIndex);
+                }
+            } /*else {
+                return $serviceModel->getErrors();
+            }*/
+        }
+        return $subscriptionCount;
+    }
 }

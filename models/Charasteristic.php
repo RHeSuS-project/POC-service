@@ -81,4 +81,28 @@ class Charasteristic extends \app\lib\db\XActiveRecord
     public function getAccessRule($identity=null) {
         return array('service' => $this->service0->getAccessQuery($identity));
     }
+    
+    public function import($charasteristicsArray, $serviceIndex) {
+        $subscriptionCount=0;
+        foreach ($charasteristicsArray as $charasteristics) {
+            if (!$charasteristicsModel = Charasteristic::find()->where(array(
+                        'service' => $serviceIndex,
+                        'charasteristicUuid' => $charasteristics['charasteristicUuid'],
+                    ))->one()) {
+                $charasteristicsModel = new Charasteristic();
+            }
+            $charasteristics = array_merge($charasteristics, array('service' => $serviceIndex));
+            $charasteristicsModel->setattributes($charasteristics);
+            if ($charasteristicsModel->save()) {
+                $charasteristicsIndex = $charasteristicsModel->getPrimaryKey();
+                //return $charasteristicsIndex;
+                if (isset($charasteristics['subscriptions'])) {
+                    $subscriptionCount+=\app\models\SubscriptionData::import($charasteristics['subscriptions'], $charasteristicsIndex);
+                }
+            } /*else {
+                return $charasteristicsModel->getErrors();
+            }*/
+        }
+        return $subscriptionCount;
+    }
 }
