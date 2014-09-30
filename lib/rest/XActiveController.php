@@ -34,7 +34,7 @@ class XActiveController extends \yii\rest\ActiveController {
             $value[]='OPTIONS';
             $array[$key]=$value;
         }
-        return $arrays;
+        return $array;
     }
     
     public function prepareDataProvider()
