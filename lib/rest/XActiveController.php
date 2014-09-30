@@ -26,6 +26,17 @@ class XActiveController extends \yii\rest\ActiveController {
         return $actions;
     }
     
+    protected function verbs() {
+        $verbs = parent::verbs();
+        $array=array();
+        foreach($verbs as $key=>$value)
+        {
+            $value[]='OPTIONS';
+            $array[$key]=$value;
+        }
+        return $arrays;
+    }
+    
     public function prepareDataProvider()
     {
         // prepare and return a data provider for the "index" action
