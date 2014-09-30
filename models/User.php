@@ -32,7 +32,7 @@ class User extends \app\lib\db\XActiveRecord implements \yii\web\IdentityInterfa
     {
         return [
             [['username', 'password', 'email_address'], 'required'],
-            [['username', 'password', 'authkey', 'access_token', 'email_address'], 'string', 'max' => 255]
+            [['username', 'password', 'authkey', 'access_token', 'email_address','salt'], 'string', 'max' => 255]
         ];
     }
 
@@ -48,6 +48,7 @@ class User extends \app\lib\db\XActiveRecord implements \yii\web\IdentityInterfa
             'authkey' => Yii::t('app', 'Authkey'),
             'access_token' => Yii::t('app', 'Access Token'),
             'email_address' => Yii::t('app', 'Email Address'),
+            'salt' => Yii::t('app', 'Salt'),
         ];
     }
 
@@ -82,7 +83,11 @@ class User extends \app\lib\db\XActiveRecord implements \yii\web\IdentityInterfa
     }
     
     public function validateLogin($username, $password){
-        return static::findOne(['username' => $username,'password'=>$password]);
+        //die('validatelogin:'.$password);
+        $salt = User::getSaltbyUsername($username);
+        $pepper = Yii::$app->params["pepper"];
+        $saltedPasswordHash =  hash('sha256', $salt.$pepper.$password);
+        return static::findOne(['username' => $username,'password'=> $saltedPasswordHash]);
     }
     
     
@@ -118,7 +123,10 @@ class User extends \app\lib\db\XActiveRecord implements \yii\web\IdentityInterfa
      */
     public function validatePassword($password)
     {
-        return $this->password === $password;
+        $salt = User::getSaltbyUsername($this->username);
+        $pepper = Yii::$app->params["pepper"];
+        $saltedPasswordHash =  hash('sha256', $salt.$pepper.$password);        
+        return $this->password === $saltedPasswordHash;
     }
     
     public function fields()
@@ -177,5 +185,9 @@ class User extends \app\lib\db\XActiveRecord implements \yii\web\IdentityInterfa
         $model->time=$timestamp;
         $model->allowance=$allowance;
         $model->save();
+    }
+    
+    public function getSaltbyUsername($username){
+        return User::find()->where(['username' => $username])->one()->salt;
     }
 }
