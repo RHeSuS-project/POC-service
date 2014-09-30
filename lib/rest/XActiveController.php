@@ -34,10 +34,7 @@ class XActiveController extends \yii\rest\ActiveController {
         }
         /* @var $modelClass \yii\db\BaseActiveRecord */
         $modelClass = $this->modelClass;
-
-        $identity = Yii::$app->user->identity;
-        $user_id = $identity->id;
-        //die(print_r($modelClass::find()));        
+      
         return new ActiveDataProvider([
         'query' => $modelClass::find(),
         ]);
