@@ -69,7 +69,7 @@ class XActiveController extends \yii\rest\ActiveController {
          * 
          * Simply have the server (API in this example) respond to OPTIONS requests without requiring authentication. 
          */
-        $behaviors['access'] = [
+        /*$behaviors['access'] = [
                 'class' => AccessControl::className(),
                 'only' => ['options'],
                 'rules' => [
@@ -78,7 +78,7 @@ class XActiveController extends \yii\rest\ActiveController {
                         'roles' => '?',
                     ],
                 ]
-            ];
+            ];*/
         $behaviors['contentNegotiator']['formats']['application/json'] = isset($_GET['callback'])?\yii\web\Response::FORMAT_JSONP:\yii\web\Response::FORMAT_JSON;
         $behaviors['contentNegotiator']['formats']['application/jsonp'] = \yii\web\Response::FORMAT_JSONP;
         
