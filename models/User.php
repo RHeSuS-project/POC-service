@@ -84,10 +84,13 @@ class User extends \app\lib\db\XActiveRecord implements \yii\web\IdentityInterfa
     
     public function validateLogin($username, $password){
         //die('validatelogin:'.$password);
-        $salt = User::getSaltbyUsername($username);
-        $pepper = Yii::$app->params["pepper"];
-        $saltedPasswordHash =  hash('sha256', $salt.$pepper.$password);
-        return static::findOne(['username' => $username,'password'=> $saltedPasswordHash]);
+        
+        if ($salt = User::getSaltbyUsername($username)){
+            $pepper = Yii::$app->params["pepper"];
+            $saltedPasswordHash =  hash('sha256', $salt.$pepper.$password);
+            return static::findOne(['username' => $username,'password'=> $saltedPasswordHash]);
+        }
+        return false;
     }
     
     
@@ -123,10 +126,12 @@ class User extends \app\lib\db\XActiveRecord implements \yii\web\IdentityInterfa
      */
     public function validatePassword($password)
     {
-        $salt = User::getSaltbyUsername($this->username);
-        $pepper = Yii::$app->params["pepper"];
-        $saltedPasswordHash =  hash('sha256', $salt.$pepper.$password);        
-        return $this->password === $saltedPasswordHash;
+        if ($salt = User::getSaltbyUsername($this->username)){
+            $pepper = Yii::$app->params["pepper"];
+            $saltedPasswordHash =  hash('sha256', $salt.$pepper.$password);        
+            return $this->password === $saltedPasswordHash;
+        }
+        return false;
     }
     
     public function fields()
@@ -189,6 +194,28 @@ class User extends \app\lib\db\XActiveRecord implements \yii\web\IdentityInterfa
     }
     
     public function getSaltbyUsername($username){
-        return User::find()->where(['username' => $username])->one()->salt;
+        try {
+            $salt = User::find()->where(['username' => $username])->one()->salt;
+            return $salt;
+            } catch (\Exception $e) {
+                return false;
+            }
+            //die($salt);
     }
+    
+    public function beforeSave($insert) {
+        if (parent::beforeSave($insert)) {
+            if($this->isNewRecord) {
+                if (Yii::$app->user->can('createUser')) {
+                    $this->salt = uniqid(mt_rand(), true);
+                    $pepper = Yii::$app->params["pepper"];
+                    $this->password = hash('sha256', $this->salt.$pepper.$this->password); 
+
+                }
+
+            }
+        }
+        return true;
+    }    
+    
 }
