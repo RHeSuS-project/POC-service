@@ -47,14 +47,21 @@ class RbacController extends Controller
                 $auth->add($deleteUser);
                 
                 // add "patient" role and give this role the "createData" permission
-                $patient = $auth->createRole('patient');
-                $auth->add($patient);
-                $auth->addChild($patient, $createData);
+                $user = $auth->createRole('user');
+                $auth->add($user);
+                $auth->addChild($user, $createData);
 
                 // add "doctor" role 
                 $doctor = $auth->createRole('doctor');
                 $auth->add($doctor);
-                $auth->addChild($doctor, $patient);
+                $auth->addChild($doctor, $user);
+                
+                // add "interface" role
+                $interface = $auth->createRole('interface');
+                $auth->add($interface);
+                $auth->addChild($interface, $createUser);
+                $auth->addChild($interface, $user);
+                
                 
                 // add "admin" role and give this role the "updateData" permission
                 // as well as the permissions of the "patient" role
@@ -63,7 +70,8 @@ class RbacController extends Controller
                 $auth->addChild($admin, $updateData);
                 $auth->addChild($admin, $deleteData);
                 $auth->addChild($admin, $readData);
-                $auth->addChild($admin, $patient);
+                $auth->addChild($admin, $user);
+                $auth->addChild($admin, $interface);
                 $auth->addChild($admin, $doctor);
 
                 // Assign roles to users. 1 and 2 are IDs returned by IdentityInterface::getId()
