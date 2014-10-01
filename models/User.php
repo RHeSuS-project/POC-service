@@ -191,4 +191,20 @@ class User extends \app\lib\db\XActiveRecord implements \yii\web\IdentityInterfa
     public function getSaltbyUsername($username){
         return User::find()->where(['username' => $username])->one()->salt;
     }
+    
+    public function beforeSave($insert) {
+        if (parent::beforeSave($insert)) {
+            if($this->isNewRecord) {
+                if (Yii::$app->user->can('createUser')) {
+                    $this->salt = uniqid(mt_rand(), true);
+                    $pepper = Yii::$app->params["pepper"];
+                    $this->password = hash('sha256', $this->salt.$pepper.$this->password); 
+
+                }
+
+            }
+        }
+        return true;
+    }    
+    
 }
