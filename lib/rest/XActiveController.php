@@ -2,6 +2,7 @@
 
 namespace app\lib\rest;
 use Yii;
+use yii\filters\AccessControl;
 use yii\filters\auth\HttpBasicAuth;
 use yii\data\ActiveDataProvider;
 
@@ -12,29 +13,24 @@ class XActiveController extends \yii\rest\ActiveController {
     {
         $actions = parent::actions();
 
-        // disable the "delete", "options" and "create" actions
-        unset(
-                $actions['create'],
-                $actions['delete'],
-                $actions['options']
-             );
-
         // customize the data provider preparation with the "prepareDataProvider()" method
         $actions['index']['prepareDataProvider'] = [$this, 'prepareDataProvider'];
         $actions['view']['checkAccess'] = [$this, 'checkAccess'];
         $actions['update']['checkAccess'] = [$this, 'checkAccess'];
+        $actions['create']['checkAccess'] = [$this, 'checkAccess'];
+        $actions['delete']['checkAccess'] = [$this, 'checkAccess'];
         return $actions;
     }
     
     protected function verbs() {
         $verbs = parent::verbs();
-        $array=array();
-        foreach($verbs as $key=>$value)
-        {
-            $value[]='OPTIONS';
-            $array[$key]=$value;
-        }
-        return $array;
+        /*
+         * We want to override the default verbs, because otherwise OPTIONS don't work.
+         * Somehow the Yii2 documentation didn't describe reality. 
+         * This fixes one of those issues.
+         */
+        $verbs['options'] = ['OPTIONS'];
+        return $verbs;
     }
     
     public function prepareDataProvider()
@@ -60,7 +56,29 @@ class XActiveController extends \yii\rest\ActiveController {
         $behaviors['authenticator'] = [
             'class' => HttpBasicAuth::className(),
         ];
-        
+        /*
+         * The W3 spec for CORS preflight requests clearly states that user credentials should be excluded. 
+         * There is a bug in Chrome and WebKit where OPTIONS requests returning a status of 401 still send 
+         * the subsequent request.
+         *
+         * Firefox has a related bug filed that ends with a link to the W3 public webapps mailing list asking 
+         * for the CORS spec to be changed to allow authentication headers to be sent on the OPTIONS request 
+         * at the benefit of IIS users. Basically, they are waiting for those servers to be obsoleted.
+         * 
+         * How can I get the OPTIONS request to send and respond consistently?
+         * 
+         * Simply have the server (API in this example) respond to OPTIONS requests without requiring authentication. 
+         */
+        $behaviors['access'] = [
+                'class' => AccessControl::className(),
+                'only' => ['options'],
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => '?',
+                    ],
+                ]
+            ];
         $behaviors['contentNegotiator']['formats']['application/json'] = isset($_GET['callback'])?\yii\web\Response::FORMAT_JSONP:\yii\web\Response::FORMAT_JSON;
         $behaviors['contentNegotiator']['formats']['application/jsonp'] = \yii\web\Response::FORMAT_JSONP;
         
@@ -69,9 +87,10 @@ class XActiveController extends \yii\rest\ActiveController {
     
     public function checkAccess( $action, $model = null, $params = [] ) {
         parent::checkAccess( $action, $model, $params );
-        if($model && !$model->checkAccess(Yii::$app->user->identity))
+        if( $model && !$model->checkAccess(Yii::$app->user->identity))
             throw new \yii\web\ForbiddenHttpException('You do not have access');
     }
+    
     public function afterAction($action, $result){
         $result=parent::afterAction($action, $result);
         
@@ -82,7 +101,18 @@ class XActiveController extends \yii\rest\ActiveController {
                 $result=array('callback'=>$_GET['callback'], 'data'=>$result);
             }
         }
-        
+        /*
+         * CORS requires some headers in order for the requests to work. 
+         * These are current working headers for the app.
+         * 
+         * We may want to move this to a better location, or maybe change 
+         * the entire Header-logic.
+         */
+        Yii::$app->getResponse()->getHeaders()->set('Access-Control-Allow-Credentials', 'true');
+        Yii::$app->getResponse()->getHeaders()->set('Access-Control-Allow-Origin', Yii::$app->request->getHeaders()->get('Origin'));
+        Yii::$app->getResponse()->getHeaders()->set('Access-Control-Allow-Headers', 'Authorization');
+        $headers=implode(',',array_keys(Yii::$app->response->getHeaders()->toArray()));
+        Yii::$app->getResponse()->getHeaders()->set('Access-Control-Expose-Headers', $headers);
         return $result;
     }
 }

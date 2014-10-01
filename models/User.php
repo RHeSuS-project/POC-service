@@ -164,7 +164,7 @@ class User extends \app\lib\db\XActiveRecord implements \yii\web\IdentityInterfa
     
     public function loadAllowance($request, $action) {
         $rateLimit=$this->getRateLimit($request, $action);
-        $allowance=Allowance::find(array('and', 'time'=>'>'.time()-$rateLimit[1], 'user'=>Yii::$app->user->identity->id))->one();
+        $allowance=Allowance::find(array('and', 'time'=>'>'.(time()-$rateLimit[1]), 'user'=>Yii::$app->user->identity->id))->one();
         $allowed=$rateLimit[0];
         if($allowance)
             $allowed=$allowance->allowance;
