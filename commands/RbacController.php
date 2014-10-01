@@ -79,6 +79,7 @@ class RbacController extends Controller
                 $auth->assign($patient, 2);
                 $auth->assign($admin, 1);
                 $auth->assign($doctor,3);
+                $auth->assign($interface,5);
                 
                 // add the rule
                 $rule = new \app\modules\rbac\rules\UpdateDataPatientRule;
