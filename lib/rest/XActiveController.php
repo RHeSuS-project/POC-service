@@ -41,12 +41,15 @@ class XActiveController extends \yii\rest\ActiveController {
         }
         /* @var $modelClass \yii\db\BaseActiveRecord */
         $modelClass = $this->modelClass;
-
+        
         $identity = Yii::$app->user->identity;
         $user_id = $identity->id;
         
         return new ActiveDataProvider([
         'query' => $modelClass::find(),
+        'pagination' => [
+            'pageSizeLimit' => [1,200]
+        ],
         ]);
     }
 
