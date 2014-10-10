@@ -56,6 +56,10 @@ class SubscriptionData extends \app\lib\db\XActiveRecord {
     public function getService0() {
         return $this->getCharasteristic0()->with('service0');
     }
+    
+    public function getAccessRule($identity=null) {
+        return array('charasteristic' => $this->getCharasteristic0()->getAccessQuery($identity));
+    }
 
     public function extraFields() {
         return ['charasteristic0', 'service0'];
