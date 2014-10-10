@@ -65,7 +65,12 @@ class Service extends \app\lib\db\XActiveRecord
     }
     
     public function getAccessRule($identity=null) {
-        return array('device' => $this->device0->getAccessQuery($identity));
+        return array('device' => $this->getDevice0()->getAccessQuery($identity));
+    }
+    
+    public function extraFields()
+    {
+        return ['device0','charasteristics'];
     }
     
     public function import($services, $deviceIndex) {

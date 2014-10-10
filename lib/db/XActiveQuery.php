@@ -4,7 +4,14 @@ namespace app\lib\db;
 class XActiveQuery extends \yii\db\ActiveQuery  {
     public function getAccessRule() {
         $class = $this->modelClass;
-        return $class::getAccessRule();
+        $model= new $class;
+        return $model->getAccessRule();
+    }
+    
+    public function getAccessQuery() {
+        $modelClass=$this->modelClass;
+        $query=(new \yii\db\Query())->select('id')->from($modelClass::tableName())->where($this->getAccessRule());
+        return $query;
     }
     
     public function all($db = null)

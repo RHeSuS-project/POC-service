@@ -79,7 +79,7 @@ class Charasteristic extends \app\lib\db\XActiveRecord
     }
     
     public function getAccessRule($identity=null) {
-        return array('service' => $this->service0->getAccessQuery($identity));
+        return array('service' => $this->getService0()->getAccessQuery($identity));
     }
     
     public function import($charasteristicsArray, $serviceIndex) {
@@ -99,9 +99,7 @@ class Charasteristic extends \app\lib\db\XActiveRecord
                 if (isset($charasteristics['subscriptions'])) {
                     $subscriptionCount+=\app\models\SubscriptionData::import($charasteristics['subscriptions'], $charasteristicsIndex);
                 }
-            } /*else {
-                return $charasteristicsModel->getErrors();
-            }*/
+            }
         }
         return $subscriptionCount;
     }

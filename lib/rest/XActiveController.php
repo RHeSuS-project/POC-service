@@ -44,12 +44,32 @@ class XActiveController extends \yii\rest\ActiveController {
         
         $identity = Yii::$app->user->identity;
         $user_id = $identity->id;
+        $query=$modelClass::find();
         
+        if($search=Yii::$app->getRequest()->get('search'))
+        {
+            $model=new $modelClass();
+            $attributes=$model->getAttributes();
+            $andWhere=array('and');
+            foreach(explode(' ',$search) as $term)
+            {
+                $where=array('or');
+                foreach($attributes as $attribute=>$value)
+                {
+                    $where[]=['like', $attribute, $term];
+                }
+                $andWhere[]=$where;
+            }
+            $query=$query->where($andWhere);
+        }
         return new ActiveDataProvider([
-        'query' => $modelClass::find(),
+        'query' => $query,
         'pagination' => [
-            'pageSizeLimit' => [1,200]
+            'pageSizeLimit' => [1,20000]
         ],
+        //'sort' => [
+            //'orders' => Yii::$app->request->get('order')
+        //],
         ]);
     }
 
