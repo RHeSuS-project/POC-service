@@ -28,7 +28,6 @@ class SubscriptionController extends \app\lib\rest\XActiveController {
     public function verbs() {
         $verbs=parent::verbs();
         $verbs['import']=['POST'];
-        $verbs['graphdata']=['GET'];
         return $verbs;
     }
     
@@ -78,20 +77,5 @@ class SubscriptionController extends \app\lib\rest\XActiveController {
             return 'total number of subscriptions made:'.$subscriptionCount;
         }
         return $arrayData;
-    }
-    
-    public function actionGraphdata($charasteristic, $startTime=null, $endTime=null, $period=null)
-    {
-        ini_set('memory_limit','5G');
-        $start=time()-24*3600;
-        if($startTime)
-            $start=strtotime($startTime);
-        $start*=1000;
-        $end=time();
-        if($endTime)
-            $end=strtotime($endTime);
-        $end*=1000;
-        $modelclass=$this->modelClass;
-        return $modelclass::find()->andWhere(['>=', 'datetime',$start,])->andWhere(['<=', 'datetime',$end,])->all();
     }
 }
