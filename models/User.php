@@ -180,7 +180,7 @@ class User extends \app\lib\db\XActiveRecord implements \yii\web\IdentityInterfa
     }
     
     public function getRateLimit( $request, $action){
-        return array(600,60);
+        return array(Yii::$app->params['rateLimit']['limit'],Yii::$app->params['rateLimit']['time']);
     }
     
     public function saveAllowance($request, $action, $allowance, $timestamp) {
@@ -220,6 +220,5 @@ class User extends \app\lib\db\XActiveRecord implements \yii\web\IdentityInterfa
             }
         }
         return true;
-    }    
-    
+    }
 }

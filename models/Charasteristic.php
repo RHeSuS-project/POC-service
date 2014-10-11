@@ -75,7 +75,7 @@ class Charasteristic extends \app\lib\db\XActiveRecord
 
     public function extraFields()
     {
-        return ['service0','descriptors'];
+        return ['service0', 'descriptors'];
     }
     
     public function getAccessRule($identity=null) {
