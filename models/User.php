@@ -170,7 +170,8 @@ class User extends \app\lib\db\XActiveRecord implements \yii\web\IdentityInterfa
     
     public function loadAllowance($request, $action) {
         $rateLimit=$this->getRateLimit($request, $action);
-        $allowance=Allowance::find(array('and', 'time'=>'>'.(time()-$rateLimit[1]), 'user'=>Yii::$app->user->identity->id))->one();
+        //die($rateLimit[1].' ');
+        $allowance=Allowance::find()->where(array('and', ['>','time',(time()-$rateLimit[1])], 'user'=>Yii::$app->user->identity->id))->one();
         $allowed=$rateLimit[0];
         if($allowance)
             $allowed=$allowance->allowance;
@@ -179,16 +180,19 @@ class User extends \app\lib\db\XActiveRecord implements \yii\web\IdentityInterfa
     }
     
     public function getRateLimit( $request, $action){
-        return array(600,600);
+        return array(600,60);
     }
     
     public function saveAllowance($request, $action, $allowance, $timestamp) {
-        if(!$model=Allowance::find(array('user'=>Yii::$app->user->identity->id))->one())
+        $rateLimit=$this->getRateLimit($request, $action);
+        //die(' '.(1413035935-(time()-$rateLimit[1])) );
+        if(!$model=Allowance::find()->where(array('user'=>Yii::$app->user->identity->id))->one())
         {
                 $model=new Allowance();
                 $model->user=Yii::$app->user->identity->id;
         }
-        $model->time=$timestamp;
+        if($model->time<=(time()-$rateLimit[1]))
+            $model->time=$timestamp;
         $model->allowance=$allowance;
         $model->save();
     }
