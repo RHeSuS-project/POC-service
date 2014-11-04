@@ -70,22 +70,24 @@ class SubscriptionData extends \app\lib\db\XActiveRecord {
         $subscriptionCount = 0;
         $subscriptionModels = array();
         foreach ($subscriptions as $subscriptiondata) {
-            if (!$subscriptionDataModel = \app\models\SubscriptionData::find()->where(array(
+            if ($subscriptionDataModel = \app\models\SubscriptionData::find()->where(array(
                         'charasteristic' => $charasteristicsIndex,
                         'datetime' => $subscriptiondata['datetime'],
+                        'value' => $subscriptiondata['value'],
                     ))->one()) {
 
-                $subscriptionDataModel = new \app\models\SubscriptionData();
+                
+                $subscriptiondata = array_merge($subscriptiondata, array('charasteristic' => $charasteristicsIndex));
+                //die(print_r($subscriptiondata,true));
+                $subscriptionDataModel->setattributes($subscriptiondata);
+                $subscriptionModels[] = $subscriptionDataModel;
+                //if ($subscriptionDataModel->save()) {
+                //++$subscriptionCount;
+                //} 
+                /* else {
+                  return $subscriptionDataModel->getErrors();
+                  } */
             }
-            $subscriptiondata = array_merge($subscriptiondata, array('charasteristic' => $charasteristicsIndex));
-            $subscriptionDataModel->setattributes($subscriptiondata);
-            $subscriptionModels[] = $subscriptionDataModel;
-            //if ($subscriptionDataModel->save()) {
-            //++$subscriptionCount;
-            //} 
-            /* else {
-              return $subscriptionDataModel->getErrors();
-              } */
         }
         $subscription->saveAll($subscriptionModels);
         return sizeof($subscriptions);

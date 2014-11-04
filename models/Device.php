@@ -99,6 +99,7 @@ class Device extends \app\lib\db\XActiveRecord
                 $deviceIndex = $deviceModel->getPrimaryKey();
                 //return $deviceIndex;
                 if (isset($device['services'])) {
+                    //die(print_r($device['services'],true));
                     $subscriptionCount+=Service::import($device['services'], $deviceIndex);
                 }
             } /*else {

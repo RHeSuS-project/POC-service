@@ -85,6 +85,8 @@ class Charasteristic extends \app\lib\db\XActiveRecord
     public function import($charasteristicsArray, $serviceIndex) {
         $subscriptionCount=0;
         foreach ($charasteristicsArray as $charasteristics) {
+            if(isset($charasteristics['charasteristicUuid']) && is_array($charasteristics['charasteristicUuid']))
+                $charasteristics['charasteristicUuid']=$charasteristics['charasteristicUuid'][0];
             if (!$charasteristicsModel = Charasteristic::find()->where(array(
                         'service' => $serviceIndex,
                         'charasteristicUuid' => $charasteristics['charasteristicUuid'],
@@ -96,9 +98,14 @@ class Charasteristic extends \app\lib\db\XActiveRecord
             if ($charasteristicsModel->save()) {
                 $charasteristicsIndex = $charasteristicsModel->getPrimaryKey();
                 //return $charasteristicsIndex;
-                if (isset($charasteristics['subscriptions'])) {
-                    $subscriptionCount+=\app\models\SubscriptionData::import($charasteristics['subscriptions'], $charasteristicsIndex);
+                //die(print_r($charasteristics,true));
+                if (isset($charasteristics['subscriptionData'])) {
+                    $subscriptionCount+=\app\models\SubscriptionData::import($charasteristics['subscriptionData'], $charasteristicsIndex);
                 }
+            }
+            else
+            {
+                die(print_r($charasteristicsModel->getErrors(),true));
             }
         }
         return $subscriptionCount;

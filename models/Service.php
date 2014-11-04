@@ -76,7 +76,8 @@ class Service extends \app\lib\db\XActiveRecord
     public function import($services, $deviceIndex) {
         $subscriptionCount=0;
         foreach ($services as $service) {
-
+            if(isset($service['serviceUuid']) && is_array($service['serviceUuid']))
+                $service['serviceUuid']=$service['serviceUuid'][0];
             if (!$serviceModel = Service::find()->where(array(
                         'device' => $deviceIndex,
                         'serviceUuid' => $service['serviceUuid'],
@@ -92,9 +93,9 @@ class Service extends \app\lib\db\XActiveRecord
                 if (isset($service['charasteristics'])) {
                     $subscriptionCount+=\app\models\Charasteristic::import($service['charasteristics'], $serviceIndex);
                 }
-            } /*else {
-                return $serviceModel->getErrors();
-            }*/
+            } //else {
+                //die(print_r( $serviceModel->getErrors(),true));
+            //}
         }
         return $subscriptionCount;
     }

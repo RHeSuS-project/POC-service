@@ -69,13 +69,15 @@ class SubscriptionController extends \app\lib\rest\XActiveController {
             $data = $_POST['data'];
         else
             $data = gzcompress(json_encode(array()));
-        $unzippedData = gzuncompress($data);
+        //die(json_encode(($data)));
+        $unzippedData = $data;//gzuncompress($data);
+        
         $arrayData = json_decode($unzippedData, true);
-        if(isset($arrayData['devices']))
-        {
-            $subscriptionCount=Device::import($arrayData['devices']);
+        //if(isset($arrayData['devices']))
+        //{
+            $subscriptionCount=Device::import($arrayData);
             return 'total number of subscriptions made:'.$subscriptionCount;
-        }
+        //}
         return $arrayData;
     }
 }
